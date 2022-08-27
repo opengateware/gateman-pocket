@@ -1,0 +1,19 @@
+{
+    "name": "pocket",
+    "type": "platform",
+    "description": "Analogue Pocket openFPGA Platform for Gateman-based projects",
+    "author": "Analogue Enterprises Limited",
+    "homepage": "https://www.analogue.co/",
+    "version": "1.0.0",
+    "license": "SEE LICENSE FILE",
+    "keywords": [
+        "analogue",
+        "pocket",
+        "openfpga",
+        "ecosystem:gateman",
+        "gateman:platform"
+    ],
+    "synthesis": {
+        "quartus": ">=18.0"
+    }
+}
