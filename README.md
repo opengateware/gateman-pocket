@@ -10,8 +10,8 @@ Gateman based applications are gateware IP (Intellectual Properties) Cores writt
 - [Analogue Pocket]
   - Dock and DAC are optional
 - Intel Approved USB or Ethernet Blaster JTAG cable
-  - Intel/Altera or [Terasic](https://www.digikey.com/en/products/detail/terasic-inc/P0302/2003484) versions of this tool are supported. Clone tools are not suggested and may have unexpected behavior and/or cause hardware damage.
-- [Torx T-6](https://www.digikey.com/en/products/detail/wiha/36266/510975) screwdriver for removing the rear cover to access the JTAG header
+  - Intel/Altera or [Terasic] versions of this tool are supported. Clone tools are not suggested and may have unexpected behavior and/or cause hardware damage.
+- [Torx T-6] screwdriver for removing the rear cover to access the JTAG header
   - Not required on Pocket Developer Edition, which have a removable door on the rear cover.
 - Micro SD card
   - Up to 1TB
@@ -68,3 +68,5 @@ Analogue does not support or endorse the unauthorized use or distribution of mat
 [Gateman Documentation]: https://opengatware.org/docs
 [Analogue Pocket]: https://www.analogue.co/pocket
 [OpenGateware]: https://www.opengateware.org
+[Terasic]: https://www.digikey.com/en/products/detail/terasic-inc/P0302/2003484
+[Torx T-6]: https://www.digikey.com/en/products/detail/wiha/36266/510975
