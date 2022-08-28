@@ -58,13 +58,13 @@
 <text text-anchor="middle" x="183.1241" y="-85.8" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#000000">core_bridge_cmd.v</text>
 </g>
 <!-- a:\OpenGateware\gateman&#45;pocket\target\pocket\core_bridge_cmd.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\platform\pocket\mf_datatable.v -->
-<g id="edge1" class="edge">
+<g id="edge2" class="edge">
 <title>a:\OpenGateware\gateman&#45;pocket\target\pocket\core_bridge_cmd.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\platform\pocket\mf_datatable.v</title>
 <path fill="none" stroke="#000000" d="M183.1241,-71.8314C183.1241,-64.131 183.1241,-54.9743 183.1241,-46.4166"/>
 <polygon fill="#000000" stroke="#000000" points="186.6242,-46.4132 183.1241,-36.4133 179.6242,-46.4133 186.6242,-46.4132"/>
 </g>
 <!-- a:\OpenGateware\gateman&#45;pocket\target\pocket\core_bridge_cmd.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\platform\pocket\common.v -->
-<g id="edge2" class="edge">
+<g id="edge1" class="edge">
 <title>a:\OpenGateware\gateman&#45;pocket\target\pocket\core_bridge_cmd.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\platform\pocket\common.v</title>
 <path fill="none" stroke="#000000" d="M221.7325,-71.8314C242.0134,-62.2874 267.0479,-50.5065 288.5212,-40.4013"/>
 <polygon fill="#000000" stroke="#000000" points="290.2355,-43.4629 297.7934,-36.038 287.2549,-37.1291 290.2355,-43.4629"/>
@@ -126,19 +126,19 @@
 <text text-anchor="middle" x="246.1241" y="-229.8" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#000000">apf_top.v</text>
 </g>
 <!-- a:\OpenGateware\gateman&#45;pocket\platform\pocket\apf_top.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\platform\pocket\mf_ddio_bidir_12.v -->
-<g id="edge9" class="edge">
+<g id="edge7" class="edge">
 <title>a:\OpenGateware\gateman&#45;pocket\platform\pocket\apf_top.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\platform\pocket\mf_ddio_bidir_12.v</title>
 <path fill="none" stroke="#000000" d="M209.4688,-219.256C184.1059,-209.0541 149.9218,-195.3041 121.4101,-183.8357"/>
 <polygon fill="#000000" stroke="#000000" points="122.5631,-180.527 111.9794,-180.0423 119.9508,-187.0213 122.5631,-180.527"/>
 </g>
 <!-- a:\OpenGateware\gateman&#45;pocket\platform\pocket\apf_top.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\target\pocket\core_top.v -->
-<g id="edge7" class="edge">
+<g id="edge8" class="edge">
 <title>a:\OpenGateware\gateman&#45;pocket\platform\pocket\apf_top.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\target\pocket\core_top.v</title>
 <path fill="none" stroke="#000000" d="M232.75,-215.8314C226.7079,-207.6232 219.4478,-197.7606 212.802,-188.7323"/>
 <polygon fill="#000000" stroke="#000000" points="215.4252,-186.3918 206.6783,-180.4133 209.7878,-190.5415 215.4252,-186.3918"/>
 </g>
 <!-- a:\OpenGateware\gateman&#45;pocket\platform\pocket\apf_top.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\platform\pocket\io_pad_controller.v -->
-<g id="edge8" class="edge">
+<g id="edge9" class="edge">
 <title>a:\OpenGateware\gateman&#45;pocket\platform\pocket\apf_top.v&#45;&gt;a:\OpenGateware\gateman&#45;pocket\platform\pocket\io_pad_controller.v</title>
 <path fill="none" stroke="#000000" d="M257.5227,-215.7623C273.1439,-190.7682 301.3164,-145.6924 319.3486,-116.8409"/>
 <polygon fill="#000000" stroke="#000000" points="322.4861,-118.4246 324.8181,-108.0896 316.5501,-114.7146 322.4861,-118.4246"/>
