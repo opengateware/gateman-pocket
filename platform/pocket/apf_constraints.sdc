@@ -10,11 +10,3 @@ create_clock -name bridge_spiclk -period 13.468 [get_ports bridge_spiclk]
 
 # autogenerate PLL clock names for use down below
 derive_pll_clocks
-
-
-# io constraints go here
-# 
-
-
-# load in user constraints 
-read_sdc "core/core_constraints.sdc"

@@ -1,11 +1,12 @@
-#####################################################################
-# SPDX-License-Identifier: GPL-3.0-or-later
+# ==============================================================================
+# SPDX-License-Identifier: CC0-1.0
 # SPDX-FileType: SOURCE
-# SPDX-FileCopyrightText: 2018-2022, The Raetro authors and contributors
-#####################################################################
-# Generate a JTAG Chain Description File containing the sof to be
-# used with Quartus Prime Programmer
-#####################################################################
+# SPDX-FileCopyrightText: (c) 2022, OpenGateware authors and contributors
+# ==============================================================================
+# @file: build_cd.h
+# @brief: Generate a JTAG Chain Description File.
+# Create a .cdf file to be used with Quartus Prime Programmer
+# ==============================================================================
 proc createChainDescriptionFile {revision device outpath project_name} {
     set outputFileName "$project_name.cdf"
     set outputFile [open $outputFileName "w"]

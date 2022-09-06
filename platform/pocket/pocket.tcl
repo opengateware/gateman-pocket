@@ -1,3 +1,14 @@
+# ==============================================================================
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileType: SOURCE
+# SPDX-FileCopyrightText: (c) 2022, OpenGateware authors and contributors
+# ==============================================================================
+# 
+# Platform Global/Location/Instance Assignments
+# 
+# ==============================================================================
+# Hardware Information
+# ==============================================================================
 set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CEBA4F23C8
 set_global_assignment -name DEVICE_FILTER_PACKAGE FBGA
@@ -28,7 +39,6 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 # Signal Tap Assignments
 # ==============================================================================
 set_global_assignment -name ENABLE_SIGNALTAP ON
-set_global_assignment -name USE_SIGNALTAP_FILE core/stp1.stp
 
 # ==============================================================================
 # Pin & Location Assignments
