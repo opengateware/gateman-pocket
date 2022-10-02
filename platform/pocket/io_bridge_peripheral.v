@@ -8,7 +8,11 @@
 // laws, including, but not limited to, U.S. copyright law. All rights are
 // reserved. By using the APF code you are agreeing to the terms of the End User
 // License Agreement (“EULA”) located at [https://www.analogue.link/pocket-eula]
-// and incorporated herein by reference.
+// and incorporated herein by reference. To the extent any use of the APF requires
+// application of the MIT License or the GNU General Public License and terms of
+// this APF Software License Agreement and EULA are inconsistent with such license,
+// the applicable terms of the MIT License or the GNU General Public License, as
+// applicable, will prevail.
 
 // THE SOFTWARE IS PROVIDED "AS-IS" AND WE EXPRESSLY DISCLAIM ANY IMPLIED
 // WARRANTIES TO THE FULLEST EXTENT PROVIDED BY LAW, INCLUDING BUT NOT LIMITED TO,
@@ -30,16 +34,16 @@
 // YOU FIRST ASSERT ANY SUCH CLAIM. THE FOREGOING LIMITATIONS SHALL APPLY TO THE
 // FULLEST EXTENT PERMITTED BY APPLICABLE LAW.
 //
-// bridge peripheral for socrates PMP bridge to heraclitus+aristotle 
+// bridge peripheral for socrates PMP bridge to heraclitus+aristotle
 // 2020-2022 Analogue
 //
 // please note that while writes are immediate,
 // reads are buffered by 1 word. this is necessary to maintain
 // data throughput while reading from slower data sources like
-// sdram. 
-// reads should always return the current bus value, and kickstart 
+// sdram.
+// reads should always return the current bus value, and kickstart
 // into the next read immediately. this way, you have the entire
-// next word time to retrieve the data, instead of just a few 
+// next word time to retrieve the data, instead of just a few
 // cycles.
 //
 // the worst-case read/write timing is every 88 cycles @ 74.25mhz
@@ -73,7 +77,7 @@ input   wire            phy_spiss
 synch_3 s00(reset_n, reset_n_s, clk);
 
     wire endian_little_s;
-synch_3 s81(endian_little, endian_little_s, clk);
+synch_3 s01(endian_little, endian_little_s, clk);
 
     wire phy_spiss_s, phy_spiss_r, phy_spiss_f;
 synch_3 s02(phy_spiss, phy_spiss_s, clk, phy_spiss_r, phy_spiss_f);
@@ -85,13 +89,12 @@ synch_3 s02(phy_spiss, phy_spiss_s, clk, phy_spiss_r, phy_spiss_f);
     localparam  ST_READ_0       = 'd2;
     localparam  ST_READ_1       = 'd3;
     localparam  ST_READ_2       = 'd4;
-    localparam  ST_READ_3       = 'd5;  
-    localparam  ST_WRITE_0      = 'd6;  
-    localparam  ST_WRITE_1      = 'd7;  
-    localparam  ST_WRITE_2      = 'd8;  
-    localparam  ST_WRITE_3      = 'd9;  
+    localparam  ST_READ_3       = 'd5;
+    localparam  ST_WRITE_0      = 'd6;
+    localparam  ST_WRITE_1      = 'd7;
+    localparam  ST_WRITE_2      = 'd8;
     localparam  ST_ADDR_0       = 'd9;
-    
+
     reg [1:0]   addr_cnt;
     reg [1:0]   data_cnt;
     reg [6:0]   read_cnt;
@@ -100,15 +103,13 @@ synch_3 s02(phy_spiss, phy_spiss_s, clk, phy_spiss_r, phy_spiss_f);
     wire rx_byte_done_s, rx_byte_done_r;
 synch_3 s03(rx_byte_done, rx_byte_done_s, clk, rx_byte_done_r);
 
-    reg         bursting;
-    
     reg [4:0]   spis;
     localparam  ST_SIDLE        = 'd1;
-    localparam  ST_SEND_N       = 'd6;  
+    localparam  ST_SEND_N       = 'd6;
     localparam  ST_SEND_0       = 'd2;
     localparam  ST_SEND_1       = 'd3;
     localparam  ST_SEND_2       = 'd4;
-    localparam  ST_SEND_3       = 'd5;      
+    localparam  ST_SEND_3       = 'd5;
     reg         spis_tx;
     reg [31:0]  spis_word_tx;
     reg [31:0]  spis_word;
@@ -117,34 +118,34 @@ synch_3 s03(rx_byte_done, rx_byte_done_s, clk, rx_byte_done_r);
 
     reg         rx_byte_done_r_1, rx_byte_done_r_2;
     reg [7:0]   rx_byte_1, rx_byte_2;
-    
+
     // handle reversing endianness on both ports
     reg [31:0]   pmp_wr_data_latch;
     reg [31:0]   pmp_rd_data_e; // asynchronous
     reg [31:0]   pmp_rd_data_buf; // buffer the last word for immediate response
 always @(*) begin
-    pmp_wr_data <= endian_little_s ? {  pmp_wr_data_latch[7:0], 
-                                        pmp_wr_data_latch[15:8], 
-                                        pmp_wr_data_latch[23:16], 
+    pmp_wr_data <= endian_little_s ? {  pmp_wr_data_latch[7:0],
+                                        pmp_wr_data_latch[15:8],
+                                        pmp_wr_data_latch[23:16],
                                         pmp_wr_data_latch[31:24]
                                     } : pmp_wr_data_latch;
-                                
-    pmp_rd_data_e <= endian_little_s ? {pmp_rd_data[7:0], 
-                                        pmp_rd_data[15:8], 
-                                        pmp_rd_data[23:16], 
+
+    pmp_rd_data_e <= endian_little_s ? {pmp_rd_data[7:0],
+                                        pmp_rd_data[15:8],
+                                        pmp_rd_data[23:16],
                                         pmp_rd_data[31:24]
                                     } : pmp_rd_data;
-end 
+end
 
-always @(posedge clk) begin 
+always @(posedge clk) begin
 
     rx_byte_2 <= rx_byte_1;
     rx_byte_1 <= rx_byte;
-    
+
     rx_byte_done_r_1 <= rx_byte_done_r;
     rx_byte_done_r_2 <= rx_byte_done_r_1;
-    
-    case(state) 
+
+    case(state)
     ST_RESET: begin
         addr_cnt <= 0;
         data_cnt <= 0;
@@ -152,7 +153,7 @@ always @(posedge clk) begin
         pmp_rd <= 0;
         pmp_addr_valid <= 0;
         spis_tx <= 0;
-        
+
         state <= ST_ADDR_0;
     end
     ST_ADDR_0: begin
@@ -167,22 +168,23 @@ always @(posedge clk) begin
                 pmp_addr[ 7: 0] <= {rx_byte_2[7:2], 2'b00};
                 // address is latched
                 if( rx_byte_2[0] ) begin
+					data_cnt <= 0;
                     state <= ST_WRITE_0;
                 end else begin
                     data_cnt <= 0;
                     read_cnt <= 0;
-                    state <= ST_READ_0; 
+                    state <= ST_READ_0;
                 end
             end
             endcase
-            
+
             addr_cnt <= addr_cnt + 1'b1;
         end
     end
     ST_WRITE_0: begin
         // give notice, address has become valid
         pmp_addr_valid <= 1;
-        
+
         if(rx_byte_done_r_2) begin
             case(data_cnt)
             0: pmp_wr_data_latch[31:24] <= rx_byte_2;
@@ -190,7 +192,7 @@ always @(posedge clk) begin
             2: pmp_wr_data_latch[15: 8] <= rx_byte_2;
             3: begin
                 pmp_wr_data_latch[ 7: 0] <= rx_byte_2;
-                state <= ST_WRITE_1; 
+                state <= ST_WRITE_1;
             end
             endcase
             data_cnt <= data_cnt + 1'b1;
@@ -198,7 +200,7 @@ always @(posedge clk) begin
     end
     ST_WRITE_1: begin
         pmp_wr <= 1;
-        state <= ST_WRITE_2; 
+        state <= ST_WRITE_2;
     end
     ST_WRITE_2: begin
         // exited upon new transaction
@@ -207,16 +209,16 @@ always @(posedge clk) begin
     ST_READ_0: begin
         pmp_addr_valid <= 1;
 
-        // delay a few cycles 
+        // delay a few cycles
         read_cnt <= read_cnt + 1'b1;
         if(read_cnt == 4-1) begin
             // load the buffer with the current data
             // and give the current buffer contents to bridge
             spis_word_tx <= pmp_rd_data_e;
             spis_tx <= 1;
-            
+
             state <= ST_READ_1;
-        end 
+        end
     end
     ST_READ_1: begin
         pmp_rd <= 1;
@@ -233,22 +235,22 @@ always @(posedge clk) begin
         // exited upon new transaction
     end
     endcase
-    
-    
-    
-    
+
+
+
+
     //
     // word transmit
-    //  
+    //
     spis_done <= 0;
     case(spis)
     ST_SIDLE: begin
         spis_count <= 0;
-        
+
         phy_spiclk <= 1'bZ;
         phy_spimosi <= 1'bZ;
         phy_spimiso <= 1'bZ;
-        
+
         if(spis_tx) begin
             spis_word <= spis_word_tx;
             spis <= ST_SEND_N;
@@ -259,34 +261,34 @@ always @(posedge clk) begin
         phy_spiclk <= 1'b1;
         phy_spimosi <= 1'b1;
         phy_spimiso <= 1'b1;
-        spis <= ST_SEND_0;  
+        spis <= ST_SEND_0;
     end
     // tx, shift out bits
-    ST_SEND_0: begin        
-        phy_spiclk <= 0;    
-        spis <= ST_SEND_1;      
+    ST_SEND_0: begin
+        phy_spiclk <= 0;
+        spis <= ST_SEND_1;
         phy_spimosi <= spis_word[31];
         phy_spimiso <= spis_word[30];
-        spis_word <= {spis_word[29:0], 2'b00};  
+        spis_word <= {spis_word[29:0], 2'b00};
     end
-    ST_SEND_1: begin        
-        phy_spiclk <= 1;    
-        spis <= ST_SEND_0;      
-        spis_count <= spis_count + 1'b1;    
-        if(spis_count == 15) spis <= ST_SEND_2; 
+    ST_SEND_1: begin
+        phy_spiclk <= 1;
+        spis <= ST_SEND_0;
+        spis_count <= spis_count + 1'b1;
+        if(spis_count == 15) spis <= ST_SEND_2;
     end
-    ST_SEND_2: begin        
-        phy_spiclk <= 1'b1; 
+    ST_SEND_2: begin
+        phy_spiclk <= 1'b1;
         phy_spimosi <= 1'b1;
         phy_spimiso <= 1'b1;
-        spis <= ST_SEND_3;      
-        spis_done <= 1; 
+        spis <= ST_SEND_3;
+        spis_done <= 1;
     end
-    ST_SEND_3: begin                            
-        spis <= ST_SIDLE;                       
+    ST_SEND_3: begin
+        spis <= ST_SIDLE;
     end
     endcase
-        
+
     if(phy_spiss_s) begin
         // select is high, go back to reset
         state <= ST_RESET;
@@ -303,23 +305,23 @@ end
     reg [7:0]   rx_dat;
     reg [7:0]   rx_byte;    // latched by clk, but upon a synchronized trigger
     reg         rx_byte_done;
-    
+
 always @(posedge phy_spiclk or posedge phy_spiss) begin
-    
+
     if(phy_spiss) begin
-        // reset 
+        // reset
         rx_byte_done <= 0;
         rx_latch_idx <= 0;
-        
+
     end else begin
         // spiclk rising edge, latch data
         rx_byte_done <= 0;
-        
+
         case(rx_latch_idx)
         0: begin    rx_dat[7:6] <= {phy_spimosi, phy_spimiso}; rx_latch_idx <= 1;   end
         1: begin    rx_dat[5:4] <= {phy_spimosi, phy_spimiso}; rx_latch_idx <= 2;   end
         2: begin    rx_dat[3:2] <= {phy_spimosi, phy_spimiso}; rx_latch_idx <= 3;   end
-        3: begin 
+        3: begin
             // last bit of the byte
             rx_byte <= {rx_dat[7:2], phy_spimosi, phy_spimiso};
             rx_latch_idx <= 0;

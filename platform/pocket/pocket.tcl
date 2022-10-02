@@ -20,7 +20,7 @@ set_global_assignment -name DEVICE_FILTER_SPEED_GRADE 8
 # ==============================================================================
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
-set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
+set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
 
 # ==============================================================================
 # Assembler Assignments

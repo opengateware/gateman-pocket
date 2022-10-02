@@ -8,7 +8,11 @@
 // laws, including, but not limited to, U.S. copyright law. All rights are
 // reserved. By using the APF code you are agreeing to the terms of the End User
 // License Agreement (“EULA”) located at [https://www.analogue.link/pocket-eula]
-// and incorporated herein by reference.
+// and incorporated herein by reference. To the extent any use of the APF requires
+// application of the MIT License or the GNU General Public License and terms of
+// this APF Software License Agreement and EULA are inconsistent with such license,
+// the applicable terms of the MIT License or the GNU General Public License, as
+// applicable, will prevail.
 
 // THE SOFTWARE IS PROVIDED "AS-IS" AND WE EXPRESSLY DISCLAIM ANY IMPLIED
 // WARRANTIES TO THE FULLEST EXTENT PROVIDED BY LAW, INCLUDING BUT NOT LIMITED TO,
@@ -31,7 +35,7 @@
 // FULLEST EXTENT PERMITTED BY APPLICABLE LAW.
 //
 // pad controller
-// 2020-08-10 Analogue - started
+// 2020-08-17 Analogue
 //
 
 module io_pad_controller (
@@ -69,13 +73,13 @@ synch_3 s01(pad_1wire, pad_1wire_s, clk, pad_1wire_r, pad_1wire_f);
 //
 
     reg [20:0]  rx_timeout; // ~28ms
-    
+
     reg [15:0]  auto_poll_cnt; // 882us
     reg         auto_poll_queue;
-    
+
     reg [18:0]  heartbeat_cnt; // 7ms
     reg         heartbeat_queue;
-    
+
 
     localparam  ST_RESET        = 'd0;
     localparam  ST_IDLE         = 'd1;
@@ -83,24 +87,24 @@ synch_3 s01(pad_1wire, pad_1wire_s, clk, pad_1wire_r, pad_1wire_f);
     localparam  ST_RX_BUTTON_2  = 'd3;
     localparam  ST_TX_SCALER    = 'd4;
     localparam  ST_END_TX       = 'd5;
-    
+
     reg [3:0]   state;
     reg [3:0]   cnt;
-    
+
 always @(posedge clk) begin
     tx_word_start <= 0;
-    
+
     auto_poll_cnt <= auto_poll_cnt + 1'b1;
     heartbeat_cnt <= heartbeat_cnt + 1'b1;
-    
+
     // increment rx timeout, override and reset when idle below
     rx_timeout <= rx_timeout + 1'b1;
-    
+
     case(state)
     ST_RESET: begin
         reset_tr_n <= 0;
         rx_timed_out <= 0;
-        
+
         if(&rx_timeout[19:0]) begin
             state <= ST_IDLE;
         end
@@ -112,61 +116,61 @@ always @(posedge clk) begin
         cnt <= 0;
         if(auto_poll_queue) begin
             auto_poll_queue <= 0;
-            
+
             tx_word_start <= 1;
             tx_word <= 32'h4A10000C;
-            
+
             state <= ST_RX_BUTTON_1;
         end else if(heartbeat_queue) begin
             heartbeat_queue <= 0;
-        
+
             tx_word_start <= 1;
             tx_word <= 32'h4AFE0000;
-        
+
             state <= ST_END_TX;
-        end 
+        end
     end
     // receive button words
     ST_RX_BUTTON_1: begin
         if(tx_word_done) begin
             state <= ST_RX_BUTTON_2;
-        end 
+        end
     end
     ST_RX_BUTTON_2: begin
         if(rx_word_done) begin
             cnt <= cnt + 1'b1;
             case(cnt)
-            0: cont1_key <= rx_word;
+            0: cont1_key <= rx_word[15:0];
             1: cont1_joy <= rx_word;
-            2: cont1_trig <= rx_word;
-            
-            3: cont2_key <= rx_word;
+            2: cont1_trig <= rx_word[15:0];
+
+            3: cont2_key <= rx_word[15:0];
             4: cont2_joy <= rx_word;
-            5: cont2_trig <= rx_word;
-            
-            6: cont3_key <= rx_word;
+            5: cont2_trig <= rx_word[15:0];
+
+            6: cont3_key <= rx_word[15:0];
             7: cont3_joy <= rx_word;
-            8: cont3_trig <= rx_word;
-            
-            9: cont4_key <= rx_word;
+            8: cont3_trig <= rx_word[15:0];
+
+            9: cont4_key <= rx_word[15:0];
             10: cont4_joy <= rx_word;
             11: begin
-                cont4_trig <= rx_word;
-                state <= ST_IDLE;   
+                cont4_trig <= rx_word[15:0];
+                state <= ST_IDLE;
             end
             endcase
-        end 
+        end
     end
-    // do nothing 
+    // do nothing
     ST_END_TX: begin
         // done sending, idle again
         if(tx_word_done) begin
-            state <= ST_IDLE;   
+            state <= ST_IDLE;
         end
     end
     endcase
-    
-    
+
+
     if(&auto_poll_cnt) begin
         auto_poll_queue <= 1;
     end
@@ -180,7 +184,7 @@ always @(posedge clk) begin
         rx_timeout <= 0;
         state <= ST_RESET;
     end
-    
+
     if(~reset_n_s) begin
         state <= ST_RESET;
     end
@@ -195,19 +199,19 @@ end
 //
     reg         reset_tr_n;
     localparam  BITLEN = 60;
-    
+
     reg         rx_word_done;
     reg [31:0]  rx_word_shift;
     reg [31:0]  rx_word;
-    
+
     reg         tx_word_start, tx_word_start_1;
     reg         tx_word_done;
     reg [31:0]  tx_word;
     reg [31:0]  tx_word_shift;
-    
+
     reg [7:0]   tr_cnt;
     reg [5:0]   tr_bit;
-    
+
     localparam  TR_IDLE         = 'd1;
     localparam  TR_TX_START     = 'd2;
     localparam  TR_TX_CONTINUE  = 'd3;
@@ -215,35 +219,35 @@ end
     localparam  TR_RX_START     = 'd5;
     localparam  TR_RX_WAITEDGE  = 'd6;
     localparam  TR_RX_DONE      = 'd7;
-    
+
     reg [3:0]   tr_state;
 
 always @(posedge clk) begin
 
     rx_word_done <= 0;
     tx_word_done <= 0;
-    
+
     tx_word_start_1 <= tx_word_start;
-    
+
     case(tr_state)
     TR_IDLE: begin
         tr_bit <= 0;
         tr_cnt <= 0;
-            
+
         pad_1wire <= 1'bZ;
-        
+
         if(tx_word_start & ~tx_word_start_1) begin
             // transmit word
             tx_word_shift <= tx_word;
             tr_state <= TR_TX_START;
         end
-        
+
         if(pad_1wire_f) begin
             // receive word
             tr_state <= TR_RX_START;
         end
     end
-    
+
     // transmit 32bit
     TR_TX_START: begin
         // insert delay
@@ -269,7 +273,7 @@ always @(posedge clk) begin
         (BITLEN-1): begin
             tr_cnt <= 0;
             tx_word_shift <= {tx_word_shift[30:0], 1'b1};
-            
+
             tr_bit <= tr_bit + 1'b1;
             if(tr_bit == 31) begin
                 tr_state <= TR_TX_DONE;
@@ -281,17 +285,17 @@ always @(posedge clk) begin
         tx_word_done <= 1;
         tr_state <= TR_IDLE;
     end
-    
+
     // receive 32bit
     TR_RX_START: begin
         tr_cnt <= tr_cnt + 1'b1;
         case(tr_cnt)
-        (BITLEN/2-4): begin 
+        (BITLEN/2-4): begin
             rx_word_shift <= {rx_word_shift[30:0], pad_1wire_s};
         end
-        (BITLEN*5/6): begin 
+        (BITLEN*5/6): begin
             tr_cnt <= 0;
-            
+
             // wait for next falling edge
             tr_state <= TR_RX_WAITEDGE;
             tr_bit <= tr_bit + 1'b1;
@@ -312,7 +316,7 @@ always @(posedge clk) begin
         rx_word_done <= 1;
         tr_state <= TR_IDLE;
     end
-    
+
     default: begin
         tr_state <= TR_IDLE;
     end

@@ -16,7 +16,7 @@ module core_top (
 // clock inputs 74.25mhz. not phase aligned, so treat these domains as asynchronous
 
 input   wire            clk_74a, // mainclk1
-input   wire            clk_74b, // mainclk1 
+input   wire            clk_74b, // mainclk1
 
 ///////////////////////////////////////////////////
 // cartridge interface
@@ -59,7 +59,7 @@ output  wire            cart_tran_pin31_dir,
 // infrared
 input   wire            port_ir_rx,
 output  wire            port_ir_tx,
-output  wire            port_ir_rx_disable, 
+output  wire            port_ir_rx_disable,
 
 // GBA link port
 inout   wire            port_tran_si,
@@ -70,7 +70,7 @@ inout   wire            port_tran_sck,
 output  wire            port_tran_sck_dir,
 inout   wire            port_tran_sd,
 output  wire            port_tran_sd_dir,
- 
+
 ///////////////////////////////////////////////////
 // cellular psram 0 and 1, two chips (64mbit x2 dual die per chip)
 
@@ -141,7 +141,7 @@ output  wire            user1,
 input   wire            user2,
 
 ///////////////////////////////////////////////////
-// RFU internal i2c bus 
+// RFU internal i2c bus
 
 inout   wire            aux_sda,
 output  wire            aux_scl,
@@ -164,7 +164,7 @@ output  wire            video_de,
 output  wire            video_skip,
 output  wire            video_vs,
 output  wire            video_hs,
-    
+
 output  wire            audio_mclk,
 input   wire            audio_adc,
 output  wire            audio_dac,
@@ -182,7 +182,7 @@ input   wire    [31:0]  bridge_wr_data,
 
 ///////////////////////////////////////////////////
 // controller data
-// 
+//
 // key bitmap:
 //   [0]    dpad_up
 //   [1]    dpad_down
@@ -221,7 +221,7 @@ input   wire    [15:0]  cont1_trig,
 input   wire    [15:0]  cont2_trig,
 input   wire    [15:0]  cont3_trig,
 input   wire    [15:0]  cont4_trig
-    
+
 );
 
 // not using the IR port, so turn off both the LED, and
@@ -258,15 +258,66 @@ assign port_tran_sck_dir = 1'b0;    // clock direction can change
 assign port_tran_sd = 1'bz;
 assign port_tran_sd_dir = 1'b0;     // SD is input and not used
 
+// tie off the rest of the pins we are not using
+assign cram0_a = 'h0;
+assign cram0_dq = {16{1'bZ}};
+assign cram0_clk = 0;
+assign cram0_adv_n = 1;
+assign cram0_cre = 0;
+assign cram0_ce0_n = 1;
+assign cram0_ce1_n = 1;
+assign cram0_oe_n = 1;
+assign cram0_we_n = 1;
+assign cram0_ub_n = 1;
+assign cram0_lb_n = 1;
+
+assign cram1_a = 'h0;
+assign cram1_dq = {16{1'bZ}};
+assign cram1_clk = 0;
+assign cram1_adv_n = 1;
+assign cram1_cre = 0;
+assign cram1_ce0_n = 1;
+assign cram1_ce1_n = 1;
+assign cram1_oe_n = 1;
+assign cram1_we_n = 1;
+assign cram1_ub_n = 1;
+assign cram1_lb_n = 1;
+
+assign dram_a = 'h0;
+assign dram_ba = 'h0;
+assign dram_dq = {16{1'bZ}};
+assign dram_dqm = 'h0;
+assign dram_clk = 'h0;
+assign dram_cke = 'h0;
+assign dram_ras_n = 'h1;
+assign dram_cas_n = 'h1;
+assign dram_we_n = 'h1;
+
+assign sram_a = 'h0;
+assign sram_dq = {16{1'bZ}};
+assign sram_oe_n  = 1;
+assign sram_we_n  = 1;
+assign sram_ub_n  = 1;
+assign sram_lb_n  = 1;
+
+assign dbg_tx = 1'bZ;
+assign user1 = 1'bZ;
+assign aux_scl = 1'bZ;
+assign vpll_feed = 1'bZ;
+
 
 // for bridge write data, we just broadcast it to all bus devices
 // for bridge read data, we have to mux it
 // add your own devices here
 always @(*) begin
     casex(bridge_addr)
+    default: begin
+        bridge_rd_data <= 0;
+    end
     32'h10xxxxxx: begin
         // example
         // bridge_rd_data <= example_device_data;
+        bridge_rd_data <= 0;
     end
     32'hF8xxxxxx: begin
         bridge_rd_data <= cmd_bridge_rd_data;
@@ -280,10 +331,10 @@ end
 //
     wire            reset_n;                // driven by host commands, can be used as core-wide reset
     wire    [31:0]  cmd_bridge_rd_data;
-    
+
 // bridge host commands
 // synchronous to clk_74a
-    wire            status_boot_done = pll_core_locked; 
+    wire            status_boot_done = pll_core_locked;
     wire            status_setup_done = pll_core_locked; // rising edge triggers a target command
     wire            status_running = reset_n; // we are running as soon as reset_n goes high
 
@@ -316,6 +367,8 @@ end
     wire            savestate_load_ok;
     wire            savestate_load_err;
 
+    wire            osnotify_inmenu;
+
 // bridge target commands
 // synchronous to clk_74a
 
@@ -338,7 +391,7 @@ core_bridge_cmd icb (
     .bridge_rd_data         ( cmd_bridge_rd_data ),
     .bridge_wr              ( bridge_wr ),
     .bridge_wr_data         ( bridge_wr_data ),
-    
+
     .status_boot_done       ( status_boot_done ),
     .status_setup_done      ( status_setup_done ),
     .status_running         ( status_running ),
@@ -372,6 +425,8 @@ core_bridge_cmd icb (
     .savestate_load_ok      ( savestate_load_ok ),
     .savestate_load_err     ( savestate_load_err ),
 
+    .osnotify_inmenu        ( osnotify_inmenu ),
+
     .datatable_addr         ( datatable_addr ),
     .datatable_wren         ( datatable_wren ),
     .datatable_data         ( datatable_data ),
@@ -389,7 +444,7 @@ core_bridge_cmd icb (
 // ~12,288,000 hz pixel clock
 //
 // we want our video mode of 320x240 @ 60hz, this results in 204800 clocks per frame
-// we need to add hblank and vblank times to this, so there will be a nondisplay area. 
+// we need to add hblank and vblank times to this, so there will be a nondisplay area.
 // it can be thought of as a border around the visible area.
 // to make numbers simple, we can have 400 total clocks per line, and 320 visible.
 // dividing 204800 by 400 results in 512 total lines per frame, and 240 visible.
@@ -413,10 +468,10 @@ assign video_hs = vidout_hs;
     localparam  VID_H_TOTAL = 'd400;
 
     reg [15:0]  frame_count;
-    
+
     reg [9:0]   x_count;
     reg [9:0]   y_count;
-    
+
     wire [9:0]  visible_x = x_count - VID_H_BPORCH;
     wire [9:0]  visible_y = y_count - VID_V_BPORCH;
 
@@ -425,45 +480,45 @@ assign video_hs = vidout_hs;
     reg         vidout_skip;
     reg         vidout_vs;
     reg         vidout_hs, vidout_hs_1;
-    
+
     reg [9:0]   square_x = 'd135;
     reg [9:0]   square_y = 'd95;
 
 always @(posedge clk_core_12288 or negedge reset_n) begin
 
     if(~reset_n) begin
-    
+
         x_count <= 0;
         y_count <= 0;
-        
+
     end else begin
         vidout_de <= 0;
         vidout_skip <= 0;
         vidout_vs <= 0;
         vidout_hs <= 0;
-        
+
         vidout_hs_1 <= vidout_hs;
         vidout_de_1 <= vidout_de;
-        
+
         // x and y counters
         x_count <= x_count + 1'b1;
         if(x_count == VID_H_TOTAL-1) begin
             x_count <= 0;
-            
+
             y_count <= y_count + 1'b1;
             if(y_count == VID_V_TOTAL-1) begin
                 y_count <= 0;
             end
         end
-        
-        // generate sync 
+
+        // generate sync
         if(x_count == 0 && y_count == 0) begin
             // sync signal in back porch
             // new frame
             vidout_vs <= 1;
             frame_count <= frame_count + 1'b1;
         end
-        
+
         // we want HS to occur a bit after VS, not on the same cycle
         if(x_count == 3) begin
             // sync signal in back porch
@@ -479,12 +534,12 @@ always @(posedge clk_core_12288 or negedge reset_n) begin
             if(y_count >= VID_V_BPORCH && y_count < VID_V_ACTIVE+VID_V_BPORCH) begin
                 // data enable. this is the active region of the line
                 vidout_de <= 1;
-                
+
                 vidout_rgb[23:16] <= 8'd60;
                 vidout_rgb[15:8]  <= 8'd60;
                 vidout_rgb[7:0]   <= 8'd60;
-                
-            end 
+
+            end
         end
     end
 end
@@ -521,10 +576,10 @@ always @(posedge audgen_mclk) begin
     aud_mclk_divider <= aud_mclk_divider + 1'b1;
 end
 
-// shift out audio data as I2S 
+// shift out audio data as I2S
 // 32 total bits per channel, but only 16 active bits at the start and then 16 dummy bits
 //
-    reg     [4:0]   audgen_lrck_cnt;    
+    reg     [4:0]   audgen_lrck_cnt;
     reg             audgen_lrck;
     reg             audgen_dac;
 always @(negedge audgen_sclk) begin
@@ -534,8 +589,8 @@ always @(negedge audgen_sclk) begin
     if(audgen_lrck_cnt == 31) begin
         // switch channels
         audgen_lrck <= ~audgen_lrck;
-        
-    end 
+
+    end
 end
 
 
@@ -544,19 +599,19 @@ end
 
     wire    clk_core_12288;
     wire    clk_core_12288_90deg;
-    
+
     wire    pll_core_locked;
-    
+
 mf_pllbase mp1 (
     .refclk         ( clk_74a ),
     .rst            ( 0 ),
-    
+
     .outclk_0       ( clk_core_12288 ),
     .outclk_1       ( clk_core_12288_90deg ),
-    
+
     .locked         ( pll_core_locked )
 );
 
 
-    
+
 endmodule

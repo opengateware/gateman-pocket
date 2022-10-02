@@ -8,7 +8,11 @@
 // laws, including, but not limited to, U.S. copyright law. All rights are
 // reserved. By using the APF code you are agreeing to the terms of the End User
 // License Agreement (“EULA”) located at [https://www.analogue.link/pocket-eula]
-// and incorporated herein by reference.
+// and incorporated herein by reference. To the extent any use of the APF requires
+// application of the MIT License or the GNU General Public License and terms of
+// this APF Software License Agreement and EULA are inconsistent with such license,
+// the applicable terms of the MIT License or the GNU General Public License, as
+// applicable, will prevail.
 
 // THE SOFTWARE IS PROVIDED "AS-IS" AND WE EXPRESSLY DISCLAIM ANY IMPLIED
 // WARRANTIES TO THE FULLEST EXTENT PROVIDED BY LAW, INCLUDING BUT NOT LIMITED TO,
@@ -32,8 +36,8 @@
 //
 // 6515C - Analogue Pocket main unit
 // SOCRATES FPGA
-// 
-// 2022-06-28 Analogue
+//
+// 2022-08-17 Analogue
 
 `default_nettype none
 
@@ -42,7 +46,7 @@ module apf_top (
 // clock inputs 74.25mhz. not phase aligned, so treat these domains as asynchronous
 
 input   wire            clk_74a, // mainclk1
-input   wire            clk_74b, // mainclk1 
+input   wire            clk_74b, // mainclk1
 
 ///////////////////////////////////////////////////
 // cartridge interface
@@ -97,7 +101,7 @@ inout   wire            port_tran_sck,
 output  wire            port_tran_sck_dir,
 inout   wire            port_tran_sd,
 output  wire            port_tran_sd_dir,
- 
+
 ///////////////////////////////////////////////////
 // video output to the scaler
 
@@ -114,8 +118,8 @@ output  wire            scal_auddac,
 output  wire            scal_audlrck,
 
 ///////////////////////////////////////////////////
-// communication between main and scaler (aristotle) fpga. 
-// spi bus with aristotle as controller. 
+// communication between main and scaler (aristotle) fpga.
+// spi bus with aristotle as controller.
 
 inout   wire            bridge_spimosi,
 inout   wire            bridge_spimiso,
@@ -176,7 +180,7 @@ output  wire            sram_ub_n,
 output  wire            sram_lb_n,
 
 ///////////////////////////////////////////////////
-// vblank output to scaler 
+// vblank output to scaler
 
 input   wire            vblank,
 
@@ -288,13 +292,13 @@ mf_ddio_bidir_12 isclk(
     wire    [15:0]  cont2_trig;
     wire    [15:0]  cont3_trig;
     wire    [15:0]  cont4_trig;
-        
+
 io_pad_controller ipm (
     .clk            ( clk_74a ),
     .reset_n        ( reset_n ),
 
     .pad_1wire      ( bridge_1wire ),
-        
+
     .cont1_key          ( cont1_key ),
     .cont2_key          ( cont2_key ),
     .cont3_key          ( cont3_key ),
@@ -308,8 +312,8 @@ io_pad_controller ipm (
     .cont3_trig         ( cont3_trig ),
     .cont4_trig         ( cont4_trig )
 );
-    
-    
+
+
 // virtual pmp bridge
     wire            bridge_endian_little;
     wire    [31:0]  bridge_addr;
@@ -322,9 +326,9 @@ io_bridge_peripheral ibs (
 
     .clk            ( clk_74a ),
     .reset_n        ( reset_n ),
-    
+
     .endian_little  ( bridge_endian_little ),
-    
+
     .pmp_addr       ( bridge_addr ),
     .pmp_rd         ( bridge_rd ),
     .pmp_rd_data    ( bridge_rd_data ),
@@ -344,7 +348,7 @@ io_bridge_peripheral ibs (
 
 core_top ic (
 
-    // physical connections 
+    // physical connections
     //
     .clk_74a                ( clk_74a ),
     .clk_74b                ( clk_74b ),
@@ -359,14 +363,14 @@ core_top ic (
     .cart_tran_bank0_dir    ( cart_tran_bank0_dir ),
     .cart_tran_pin30        ( cart_tran_pin30 ),
     .cart_tran_pin30_dir    ( cart_tran_pin30_dir ),
-    .cart_pin30_pwroff_reset ( cart_pin30_pwroff_reset ),   
+    .cart_pin30_pwroff_reset ( cart_pin30_pwroff_reset ),
     .cart_tran_pin31        ( cart_tran_pin31 ),
     .cart_tran_pin31_dir    ( cart_tran_pin31_dir ),
 
     .port_ir_rx             ( port_ir_rx ),
     .port_ir_tx             ( port_ir_tx ),
     .port_ir_rx_disable     ( port_ir_rx_disable ),
-    
+
     .port_tran_si           ( port_tran_si ),
     .port_tran_si_dir       ( port_tran_si_dir ),
     .port_tran_so           ( port_tran_so ),
@@ -375,7 +379,7 @@ core_top ic (
     .port_tran_sck_dir      ( port_tran_sck_dir ),
     .port_tran_sd           ( port_tran_sd ),
     .port_tran_sd_dir       ( port_tran_sd_dir ),
- 
+
     .cram0_a                ( cram0_a ),
     .cram0_dq               ( cram0_dq ),
     .cram0_wait             ( cram0_wait ),
@@ -410,7 +414,7 @@ core_top ic (
     .dram_ras_n             ( dram_ras_n ),
     .dram_cas_n             ( dram_cas_n ),
     .dram_we_n              ( dram_we_n ),
-    
+
     .sram_a                 ( sram_a ),
     .sram_dq                ( sram_dq ),
     .sram_oe_n              ( sram_oe_n ),
@@ -420,16 +424,16 @@ core_top ic (
 
     .vblank                 ( vblank ),
     .vpll_feed              ( vpll_feed ),
-    
+
     .dbg_tx                 ( dbg_tx ),
     .dbg_rx                 ( dbg_rx ),
     .user1                  ( user1 ),
     .user2                  ( user2 ),
-    
+
     .aux_sda                ( aux_sda ),
-    .aux_scl                ( aux_scl ),    
-    
-    
+    .aux_scl                ( aux_scl ),
+
+
     // logical connections with user core
     //
     .video_rgb              ( video_rgb ),
@@ -444,14 +448,14 @@ core_top ic (
     .audio_adc              ( scal_audadc ),
     .audio_dac              ( scal_auddac ),
     .audio_lrck             ( scal_audlrck ),
-    
+
     .bridge_endian_little   ( bridge_endian_little ),
     .bridge_addr            ( bridge_addr ),
     .bridge_rd              ( bridge_rd ),
-    .bridge_rd_data         ( bridge_rd_data ), 
+    .bridge_rd_data         ( bridge_rd_data ),
     .bridge_wr              ( bridge_wr ),
     .bridge_wr_data         ( bridge_wr_data ),
-    
+
     .cont1_key              ( cont1_key ),
     .cont2_key              ( cont2_key ),
     .cont3_key              ( cont3_key ),
@@ -464,7 +468,7 @@ core_top ic (
     .cont2_trig             ( cont2_trig ),
     .cont3_trig             ( cont3_trig ),
     .cont4_trig             ( cont4_trig )
-    
+
 );
 
 endmodule
