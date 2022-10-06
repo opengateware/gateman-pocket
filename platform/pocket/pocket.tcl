@@ -61,10 +61,10 @@ set_instance_assignment -name IO_STANDARD "1.8 V" -to bridge_spimiso
 set_instance_assignment -name IO_STANDARD "1.8 V" -to bridge_spimosi
 set_instance_assignment -name IO_STANDARD "1.8 V" -to bridge_1wire
 set_instance_assignment -name IO_STANDARD "1.8 V" -to bridge_spiss
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to bridge_spiclk
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to bridge_spimiso
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to bridge_spimosi
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to bridge_1wire
+set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to bridge_spiclk
+set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to bridge_spimiso
+set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to bridge_spimosi
+set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to bridge_1wire
 
 # ==============================================================================
 # Cartridge interface

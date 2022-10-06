@@ -345,6 +345,7 @@ end
 
     wire            dataslot_requestwrite;
     wire    [15:0]  dataslot_requestwrite_id;
+    wire    [31:0]  dataslot_requestwrite_size;
     wire            dataslot_requestwrite_ack = 1;
     wire            dataslot_requestwrite_ok = 1;
 
@@ -403,6 +404,7 @@ core_bridge_cmd icb (
 
     .dataslot_requestwrite      ( dataslot_requestwrite ),
     .dataslot_requestwrite_id   ( dataslot_requestwrite_id ),
+    .dataslot_requestwrite_size ( dataslot_requestwrite_size ),
     .dataslot_requestwrite_ack  ( dataslot_requestwrite_ack ),
     .dataslot_requestwrite_ok   ( dataslot_requestwrite_ok ),
 
@@ -557,7 +559,7 @@ assign audio_dac = audgen_dac;
 assign audio_lrck = audgen_lrck;
 
 // generate MCLK = 12.288mhz with fractional accumulator
-    reg         [21:0]  audgen_accum;
+    reg         [21:0]  audgen_accum = 0;
     reg                 audgen_mclk;
     parameter   [20:0]  CYCLE_48KHZ = 21'd122880 * 2;
 always @(posedge clk_74a) begin

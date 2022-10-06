@@ -40,6 +40,7 @@ input   wire            dataslot_requestread_ok,
 
 output  reg             dataslot_requestwrite,
 output  reg     [15:0]  dataslot_requestwrite_id,
+output  reg     [31:0]  dataslot_requestwrite_size,
 input   wire            dataslot_requestwrite_ack,
 input   wire            dataslot_requestwrite_ok,
 
@@ -314,6 +315,7 @@ always @(posedge clk) begin
             dataslot_allcomplete <= 0;
             dataslot_requestwrite <= 1;
             dataslot_requestwrite_id <= host_20[15:0];
+            dataslot_requestwrite_size <= host_24;
             if(dataslot_requestwrite_ack) begin
                 host_resultcode <= 0;
                 if(!dataslot_requestwrite_ok) host_resultcode <= 2;
