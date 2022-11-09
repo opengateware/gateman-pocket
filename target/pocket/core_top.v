@@ -351,7 +351,16 @@ end
     wire            dataslot_requestwrite_ack = 1;
     wire            dataslot_requestwrite_ok = 1;
 
+    wire            dataslot_update;
+    wire    [15:0]  dataslot_update_id;
+    wire    [31:0]  dataslot_update_size;
+
     wire            dataslot_allcomplete;
+
+    wire     [31:0] rtc_epoch_seconds;
+    wire     [31:0] rtc_date_bcd;
+    wire     [31:0] rtc_time_bcd;
+    wire            rtc_valid;
 
     wire            savestate_supported;
     wire    [31:0]  savestate_addr;
@@ -371,12 +380,24 @@ end
     wire            savestate_load_err;
 
     wire            osnotify_inmenu;
-    wire    [31:0]  osnotify_rtc; // RTC is seconds since UNIX epoch
+
 // bridge target commands
 // synchronous to clk_74a
 
+    reg             target_dataslot_read;
+    reg             target_dataslot_write;
+
+    wire            target_dataslot_ack;
+    wire            target_dataslot_done;
+    wire    [2:0]   target_dataslot_err;
+
+    reg     [15:0]  target_dataslot_id;
+    reg     [31:0]  target_dataslot_slotoffset;
+    reg     [31:0]  target_dataslot_bridgeaddr;
+    reg     [31:0]  target_dataslot_length;
 
 // bridge data slot access
+// synchronous to clk_74a
 
     wire    [9:0]   datatable_addr;
     wire            datatable_wren;
@@ -410,7 +431,16 @@ core_bridge_cmd icb (
     .dataslot_requestwrite_ack  ( dataslot_requestwrite_ack ),
     .dataslot_requestwrite_ok   ( dataslot_requestwrite_ok ),
 
+    .dataslot_update            ( dataslot_update ),
+    .dataslot_update_id         ( dataslot_update_id ),
+    .dataslot_update_size       ( dataslot_update_size ),
+
     .dataslot_allcomplete   ( dataslot_allcomplete ),
+
+    .rtc_epoch_seconds      ( rtc_epoch_seconds ),
+    .rtc_date_bcd           ( rtc_date_bcd ),
+    .rtc_time_bcd           ( rtc_time_bcd ),
+    .rtc_valid              ( rtc_valid ),
 
     .savestate_supported    ( savestate_supported ),
     .savestate_addr         ( savestate_addr ),
@@ -430,12 +460,23 @@ core_bridge_cmd icb (
     .savestate_load_err     ( savestate_load_err ),
 
     .osnotify_inmenu        ( osnotify_inmenu ),
-    .osnotify_rtc           ( osnotify_rtc ),
+
+    .target_dataslot_read       ( target_dataslot_read ),
+    .target_dataslot_write      ( target_dataslot_write ),
+
+    .target_dataslot_ack        ( target_dataslot_ack ),
+    .target_dataslot_done       ( target_dataslot_done ),
+    .target_dataslot_err        ( target_dataslot_err ),
+
+    .target_dataslot_id         ( target_dataslot_id ),
+    .target_dataslot_slotoffset ( target_dataslot_slotoffset ),
+    .target_dataslot_bridgeaddr ( target_dataslot_bridgeaddr ),
+    .target_dataslot_length     ( target_dataslot_length ),
 
     .datatable_addr         ( datatable_addr ),
     .datatable_wren         ( datatable_wren ),
     .datatable_data         ( datatable_data ),
-    .datatable_q            ( datatable_q ),
+    .datatable_q            ( datatable_q )
 
 );
 

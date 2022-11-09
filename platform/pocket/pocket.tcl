@@ -65,6 +65,10 @@ set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to bridge_spiclk
 set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to bridge_spimiso
 set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to bridge_spimosi
 set_instance_assignment -name CURRENT_STRENGTH_NEW 8MA -to bridge_1wire
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to bridge_spiclk
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to bridge_spimiso
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to bridge_spimosi
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to bridge_1wire
 
 # ==============================================================================
 # Cartridge interface
