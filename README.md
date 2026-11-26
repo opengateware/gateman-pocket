@@ -63,9 +63,9 @@ Analogue does not support or endorse the unauthorized use or distribution of mat
 [Intel Quartus Lite]: https://www.intel.com/content/www/us/en/products/details/fpga/development-tools/quartus-prime/resource.html
 [Analogue openFPGA]: https://www.analogue.co/developer
 [openFPGA SDK Documentation]: https://www.analogue.co/developer/docs/overview
-[Gateman CLI]: https://github.com/opengatware/gateman
-[Create your first gateware]: https://opengatware.org/docs/cli/getting-started.html
-[Gateman Documentation]: https://opengatware.org/docs
+[Gateman CLI]: https://github.com/opengateware/gateman
+[Create your first gateware]: https://opengateware.org/docs/cli/getting-started.html
+[Gateman Documentation]: https://opengateware.org/docs
 [Analogue Pocket]: https://www.analogue.co/pocket
 [OpenGateware]: https://www.opengateware.org
 [Terasic]: https://www.digikey.com/en/products/detail/terasic-inc/P0302/2003484
